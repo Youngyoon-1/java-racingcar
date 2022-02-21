@@ -2,9 +2,6 @@ package racingcar.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +13,9 @@ public class CarsTest {
 
     @BeforeEach
     void setUp() {
-        car1 = new Car(new CarName("칙촉"));
-        car2 = new Car(new CarName("어썸오"));
-        cars = new Cars(Arrays.asList(car1, car2), () -> true);
+        cars = new Cars("칙촉,어썸오", () -> true);
+        car1 = cars.get().get(0);
+        car2 =  cars.get().get(1);
     }
 
     @Test
@@ -52,26 +49,20 @@ public class CarsTest {
 
     @Test
     void 자동차가_중복된_이름을_가지고_있을_경우_예외발생() {
-        Car car1 = new Car(new CarName("앨런"));
-        Car car2 = new Car(new CarName("앨런"));
-        List<Car> inCorrectCars = Arrays.asList(car1, car2);
-
-        assertThatThrownBy(() -> new Cars(inCorrectCars, () -> true))
+        assertThatThrownBy(() -> new Cars("칙촉,칙촉", () -> true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("중복");
     }
 
     @Test
     void 자동차가_한대_일경우_예외발생() {
-        List<Car> onlyOneCar = List.of(car1);
-
-        assertThatThrownBy(() -> new Cars(onlyOneCar, () -> true))
+        assertThatThrownBy(() -> new Cars("칙촉", () -> true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("최소");
     }
 
     @Test
-    void 자동차들이_null_일경우_예외발생() {
+    void 입력값이_null_일경우_예외발생() {
         assertThatThrownBy(() -> new Cars(null, () -> true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("null");

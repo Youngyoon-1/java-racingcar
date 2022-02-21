@@ -1,9 +1,11 @@
 package racingcar.domain;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Cars {
     private static final int MINIMUM_CAR_NAME_QUANTITY = 2;
@@ -11,18 +13,23 @@ public class Cars {
     private final List<Car> cars;
     private final MoveStrategy moveStrategy;
 
-    public Cars(final List<Car> cars, final MoveStrategy moveStrategy) {
-        if (Objects.isNull(cars)) {
+    public Cars(final String input, final MoveStrategy moveStrategy) {
+        if (Objects.isNull(input)) {
             throw new IllegalArgumentException("null은 사용할 수 없습니다. List<Car>타입을 사용하세요.");
         }
         if (Objects.isNull(moveStrategy)) {
             throw new IllegalArgumentException("null은 사용할 수 없습니다. MoveStrategy타입을 사용하세요.");
         }
 
-        checkCars(cars);
-
-        this.cars = cars;
+        this.cars = generateCars(input);
         this.moveStrategy = moveStrategy;
+    }
+
+    private List<Car> generateCars(final String input) {
+        final List<Car> cars = Arrays.stream(input.split(",")).map(CarName::new).map(Car::new)
+                .collect(Collectors.toList());
+        checkCars(cars);
+        return cars;
     }
 
     private void checkCars(final List<Car> cars) {

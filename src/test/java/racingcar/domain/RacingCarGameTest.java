@@ -10,35 +10,30 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NoneAsciiCharacters")
 public class RacingCarGameTest {
-    private Car correctCar2;
     private Cars correctCars;
     private Count correctCount;
     private RacingCarGame racingCarGame;
 
     @BeforeEach
     void setUp() {
-        final CarName correctName1 = new CarName("칙촉");
-        final CarName correctName2 = new CarName("어썸오");
-        final Car correctCar1 = new Car(correctName1);
-        correctCar2 = new Car(correctName2);
-        correctCars = new Cars(Arrays.asList(correctCar1, correctCar2), () -> true);
+        correctCars = new Cars("칙촉,어썸오", () -> true);
         correctCount = new MockCount(1);
         racingCarGame = new RacingCarGame(correctCars, correctCount);
     }
 
     @Test
     void 자동차이름_입력값을_null로_생성_시도할_경우_예외발생() {
-        final Cars cars = null;
+        final Cars incorrectCars = null;
 
-        assertThatThrownBy(() -> new RacingCarGame(cars, correctCount))
+        assertThatThrownBy(() -> new RacingCarGame(incorrectCars, correctCount))
                 .hasMessageContaining("null은 사용할 수 없습니다. Cars 타입을 이용하세요.");
     }
 
     @Test
     void MoveStrategy를_null로_생성_시도할_경우_예외발생() {
-        final Count count = null;
+        final Count incorrectCount = null;
 
-        assertThatThrownBy(() -> new RacingCarGame(correctCars, count)).isInstanceOf(
+        assertThatThrownBy(() -> new RacingCarGame(correctCars, incorrectCount)).isInstanceOf(
                         IllegalArgumentException.class)
                 .hasMessageContaining("null은 사용할 수 없습니다. Count 타입을 이용하세요.");
     }
@@ -62,13 +57,6 @@ public class RacingCarGameTest {
         for (Car car : cars) {
             assertThat(car.getPosition()).isEqualTo(positionAfterMove);
         }
-    }
-
-    @Test
-    void 우승자_뽑기_한명일_경우() {
-        correctCar2.attemptToMove(true);
-
-        assertThat(racingCarGame.getWinners()).containsOnly(correctCar2);
     }
 
     @Test
